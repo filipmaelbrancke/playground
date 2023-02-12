@@ -1,8 +1,8 @@
+use clap::{Arg, ArgAction, Command};
 use std::error::Error;
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader};
-use clap::{Arg, ArgAction, Command};
 
 type RCatResult<T> = Result<T, Box<dyn Error>>;
 
@@ -10,7 +10,7 @@ type RCatResult<T> = Result<T, Box<dyn Error>>;
 pub struct Config {
     files: Vec<String>,
     number_lines: bool,
-    number_nonblank_lines: bool
+    number_nonblank_lines: bool,
 }
 
 pub fn get_args() -> RCatResult<Config> {
@@ -23,7 +23,7 @@ pub fn get_args() -> RCatResult<Config> {
                 .value_name("FILE")
                 .help("Input file(s)")
                 .num_args(1..)
-                .default_value("-")
+                .default_value("-"),
         )
         .arg(
             Arg::new("number")
@@ -31,14 +31,14 @@ pub fn get_args() -> RCatResult<Config> {
                 .long("number")
                 .help("Number lines")
                 .action(ArgAction::SetTrue)
-                .conflicts_with("number_nonblank")
+                .conflicts_with("number_nonblank"),
         )
         .arg(
             Arg::new("number_nonblank")
                 .short('b')
                 .long("number-nonblank")
                 .help("Number non-blank lines")
-                .action(ArgAction::SetTrue)
+                .action(ArgAction::SetTrue),
         )
         .get_matches();
 
@@ -83,6 +83,6 @@ pub fn run(config: Config) -> RCatResult<()> {
 fn open(filename: &str) -> RCatResult<Box<dyn BufRead>> {
     match filename {
         "-" => Ok(Box::new(BufReader::new(io::stdin()))),
-        _ => Ok(Box::new(BufReader::new(File::open(filename)?)))
+        _ => Ok(Box::new(BufReader::new(File::open(filename)?))),
     }
 }
