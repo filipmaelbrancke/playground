@@ -5,3 +5,4 @@ Trying to program a bit during the evenings while solution-architecting at the j
 
 - [echo command in Rust](rust/recho/)
 - [cat command in Rust](rust/rcat/)
+- [head command in Rust](rust/rhead/)
