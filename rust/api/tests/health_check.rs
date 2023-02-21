@@ -3,7 +3,7 @@ use std::io::Error;
 #[tokio::test]
 async fn health_check_should_return_ok() {
     // Arrange
-    spawn_api_app().await.expect("Failed to spawn the api app");
+    spawn_api_app();
     let client = reqwest::Client::new();
 
     // Act
@@ -18,6 +18,10 @@ async fn health_check_should_return_ok() {
     assert_eq!(Some(0), response.content_length());
 }
 
-async fn spawn_api_app() -> Result<(), Error> {
-    todo!()
+fn spawn_api_app() {
+    let server = api::run().expect("Failed to bind");
+    // launch server as background task
+    // tokio::spawn returns handle to spawned future
+    // not used here -> hence non-binding let
+    let _ = tokio::spawn(server);
 }
