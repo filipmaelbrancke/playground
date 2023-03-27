@@ -6,4 +6,8 @@ cargo build
 cargo run
 
 http localhost:8000
+
 ```
+
+Audit dependencies: `cargo audit`
+
