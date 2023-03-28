@@ -1,5 +1,5 @@
-use std::net::TcpListener;
 use reqwest::StatusCode;
+use std::net::TcpListener;
 
 #[tokio::test]
 async fn health_check_should_return_ok() {
@@ -48,7 +48,7 @@ async fn subscribe_should_fail_with_a_400_when_missing_data() {
     let test_cases = vec![
         ("name=le%20guin", "missing the email"),
         ("email=ursula_le_guin%40gmail.com", "missing the name"),
-        ("", "missing both name and email")
+        ("", "missing both name and email"),
     ];
 
     for (invalid_body, error_message) in test_cases {
@@ -65,13 +65,15 @@ async fn subscribe_should_fail_with_a_400_when_missing_data() {
         assert_eq!(
             400,
             response.status().as_u16(),
-            "The API did not fail with 400 Bad Request when the payload was {}", error_message
+            "The API did not fail with 400 Bad Request when the payload was {}",
+            error_message
         );
     }
 }
 
 fn spawn_api_app() -> String {
-    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind to a random port on localhost");
+    let listener =
+        TcpListener::bind("127.0.0.1:0").expect("Failed to bind to a random port on localhost");
     let port = listener.local_addr().unwrap().port();
     let server = api::run(listener).expect("Failed to bind");
     // launch server as background task
