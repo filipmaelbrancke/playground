@@ -56,7 +56,8 @@ jobs:
       - name: Install postgresql-client
         run: sudo apt-get update && sudo apt-get install postgresql-client -y
       - name: Migrate database
-        run: SKIP_DOCKER=true ./rust/api/scripts/init_db.sh
+        run: SKIP_DOCKER=true ./scripts/init_db.sh
+        working-directory: ./rust/api
       - name: Run tests
         run: cargo test --verbose --manifest-path rust/api/Cargo.toml
         
