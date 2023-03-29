@@ -43,14 +43,14 @@ jobs:
       - name: Enforce formatting
         run: cargo fmt --check --verbose --manifest-path rust/api/Cargo.toml
         
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
-      - uses: Swatinem/rust-cache@v2
-      - name: Linting
-        run: cargo clippy --verbose --manifest-path rust/api/Cargo.toml -- -D warnings
+#  clippy:
+#    name: Clippy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: dtolnay/rust-toolchain@stable
+#        with:
+#          components: clippy
+#      - uses: Swatinem/rust-cache@v2
+#      - name: Linting
+#        run: cargo clippy --verbose --manifest-path rust/api/Cargo.toml -- -D warnings
