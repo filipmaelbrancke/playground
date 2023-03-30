@@ -1,0 +1,27 @@
+name: Rust command-line apps
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out code
+        uses: actions/checkout@v3
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Smart caching for Rust/Cargo
+        uses: Swatinem/rust-cache@v2
+      - name: Build all command-line apps
+        run: sh -x ./rust/scripts/cmd_apps_ci.sh
+        # working-directory: ./rust
+        

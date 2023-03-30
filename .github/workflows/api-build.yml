@@ -12,15 +12,6 @@ env:
   SQLX_FEATURES: "rustls,postgres"
 
 jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v3
-#    - name: Build
-#      run: cargo build --verbose --manifest-path rust/api/Cargo.toml
-#    - name: Run tests
-#      run: cargo test --verbose --manifest-path rust/api/Cargo.toml
-  
   
   test:
     name: Test
