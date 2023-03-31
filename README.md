@@ -9,3 +9,4 @@ Trying to program a bit during the evenings while solution-architecting at the j
 - [wc command in Rust](rust/rwc/)
 - [uniq command in Rust](rust/runiq/)
 - [find command in Rust](rust/rfind/)
+- [cut command in Rust](rust/rcut/)
