@@ -4,6 +4,30 @@ use reqwest::StatusCode;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use uuid::Uuid;
+use api::telemetry::{get_subscriber, init_subscriber};
+use once_cell::sync::Lazy;
+
+static TRACING: Lazy<()> = Lazy::new(|| {
+    let default_filter_level = "info".to_string();
+    let subscriber_name = "test".to_string();
+    // cannot assign output of `get_subscriber` to a variable based on value TEST_LOG
+    // since the sink is part of the type returned by `get_subscriber` (and therefore
+    // not the same type).
+    if std::env::var("TEST_LOG").is_ok() {
+        let subscriber = get_subscriber(
+            subscriber_name,
+            default_filter_level,
+        std::io::stdout);
+        init_subscriber(subscriber);
+    } else {
+        let subscriber = get_subscriber(
+            subscriber_name,
+            default_filter_level,
+            std::io::sink
+        );
+        init_subscriber(subscriber);
+    }
+});
 
 pub struct TestApp {
     pub address: String,
@@ -88,6 +112,8 @@ async fn subscribe_should_fail_with_a_400_when_missing_data() {
 }
 
 async fn spawn_api_app() -> TestApp {
+    Lazy::force(&TRACING);
+
     let listener =
         TcpListener::bind("127.0.0.1:0").expect("Failed to bind to a random port on localhost");
     let port = listener.local_addr().unwrap().port();

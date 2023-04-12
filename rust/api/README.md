@@ -10,6 +10,8 @@ cargo install --version="~0.6" sqlx-cli --no-default-features --features rustls,
 # Build - Run
 
 ```
+./dev.sh
+
 cargo build
 
 cargo run
@@ -17,6 +19,13 @@ cargo run
 http localhost:8000
 
 ```
+
+## debug test case
+
+```
+TEST_LOG=true cargo test health_check_should_return_ok | bunyan
+```
+(bunyan CLI = prettify outputted logs)
 
 # Misc
 
