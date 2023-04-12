@@ -63,14 +63,36 @@ jobs:
       - name: Enforce formatting
         run: cargo fmt --check --verbose --manifest-path rust/api/Cargo.toml
         
-#  clippy:
-#    name: Clippy
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: dtolnay/rust-toolchain@stable
-#        with:
-#          components: clippy
-#      - uses: Swatinem/rust-cache@v2
-#      - name: Linting
-#        run: cargo clippy --verbose --manifest-path rust/api/Cargo.toml -- -D warnings
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Smart caching for Rust/Cargo
+        uses: Swatinem/rust-cache@v2
+        with: 
+          key: sqlx-${{ env.SQLX_VERSION }}
+      - name: Install sqlx-cli
+        run:
+            cargo install sqlx-cli
+            --version=${{ env.SQLX_VERSION }}
+            --features ${{ env.SQLX_FEATURES }}
+            --no-default-features
+            --locked
+      - name: Migrate database
+        run: SKIP_DOCKER=true ./scripts/init_db.sh
+        working-directory: ./rust/api
+      - name: Linting
+        run: cargo clippy --verbose --manifest-path rust/api/Cargo.toml -- -D warnings

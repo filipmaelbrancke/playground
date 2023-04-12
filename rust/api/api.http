@@ -1,2 +1,9 @@
 ### Health Check
 GET http://localhost:8000/health_check
+
+### Subscribe
+POST http://localhost:8000/subscriptions
+Content-Type: application/x-www-form-urlencoded
+
+name={{$random.alphabetic(10)}}&email={{$random.alphanumeric(20)}}%40gmail.com
+
