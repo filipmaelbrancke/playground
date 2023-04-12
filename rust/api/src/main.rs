@@ -12,7 +12,10 @@ use telemetry::{get_subscriber, init_subscriber};
 async fn main() -> Result<(), Error> {
     let subscriber = get_subscriber(
         // output formatted spans to stdout
-        "api".into(), "info".into(), std::io::stdout);
+        "api".into(),
+        "info".into(),
+        std::io::stdout,
+    );
     init_subscriber(subscriber);
 
     let configuration = get_configuration().expect("Failed to read the configuration.yaml file");
