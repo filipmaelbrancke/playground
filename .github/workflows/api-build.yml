@@ -49,6 +49,10 @@ jobs:
       - name: Migrate database
         run: SKIP_DOCKER=true ./scripts/init_db.sh
         working-directory: ./rust/api
+      - name: Check sqlx-data.json is up-to-date
+        run: |
+          cargo sqlx prepare --check -- --bin api
+        working-directory: ./rust/api
       - name: Run tests
         run: cargo test --verbose --manifest-path rust/api/Cargo.toml
         

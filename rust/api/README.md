@@ -62,3 +62,7 @@ Topics to revisit:
   - Serialisation: implementation of `Serializer` trait
   - Serialize trait: implementation of `Serialize::serialize` for Rust type = decomposition using the methods available on `Serializer` trait
 - Code coverage
+
+# Resources
+
+- [Zero To Production In Rust](https://www.zero2prod.com/)
