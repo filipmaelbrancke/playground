@@ -1,6 +1,6 @@
 # playground
 
-Trying to program a bit during the evenings while solution-architecting at the job...
+Trying to program a bit during the evenings while not-programming at the job...
 
 - [playing around with backend development in Rust](rust/api/)
 - [echo command in Rust](rust/recho/)
@@ -10,3 +10,4 @@ Trying to program a bit during the evenings while solution-architecting at the j
 - [uniq command in Rust](rust/runiq/)
 - [find command in Rust](rust/rfind/)
 - [cut command in Rust](rust/rcut/)
+- [grep command in Rust](rust/rgrep/)
