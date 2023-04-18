@@ -19,7 +19,7 @@ async fn main() -> Result<(), Error> {
     );
     init_subscriber(subscriber);
 
-    let configuration = get_configuration().expect("Failed to read the configuration.yaml file");
+    let configuration = get_configuration().expect("Failed to read configuration");
     let connection_pool =
         PgPool::connect_lazy(configuration.database.connection_string().expose_secret())
             .expect("Failed to connect to the database");
