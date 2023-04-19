@@ -1,4 +1,3 @@
-//use config::Environment;
 use secrecy::ExposeSecret;
 use secrecy::Secret;
 
@@ -93,10 +92,6 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .add_source(config::File::from(
             configuration_directory.join(environment_filename),
         ))
-        /*.add_source(config::File::new(
-            "configuration.yaml",
-            config::FileFormat::Yaml,
-        ))*/
         .build()?;
     settings.try_deserialize::<Settings>()
 }
