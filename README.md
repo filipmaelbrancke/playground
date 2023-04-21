@@ -11,3 +11,4 @@ Trying to program a bit during the evenings while not-programming at the job...
 - [find command in Rust](rust/rfind/)
 - [cut command in Rust](rust/rcut/)
 - [grep command in Rust](rust/rgrep/)
+- [comm command in Rust](rust/rcomm/)
