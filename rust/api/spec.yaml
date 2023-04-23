@@ -29,19 +29,19 @@ services:
     envs:
       - key: APP_DATABASE__USERNAME
         scope: RUN_TIME
-        value: ${newsletter.USERNAME}
+        value: ${rust-api.USERNAME}
       - key: APP_DATABASE__PASSWORD
         scope: RUN_TIME
-        value: ${newsletter.PASSWORD}
+        value: ${rust-api.PASSWORD}
       - key: APP_DATABASE__HOST
         scope: RUN_TIME
-        value: ${newsletter.HOSTNAME}
+        value: ${rust-api.HOSTNAME}
       - key: APP_DATABASE__PORT
         scope: RUN_TIME
-        value: ${newsletter.PORT}
+        value: ${rust-api.PORT}
       - key: APP_DATABASE__DATABASE_NAME
         scope: RUN_TIME
-        value: ${newsletter.DATABASE}
+        value: ${rust-api.DATABASE}
 databases:
   # PG = Postgres
   - engine: PG
