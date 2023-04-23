@@ -4,7 +4,6 @@ use std::net::TcpListener;
 use api::configuration::get_configuration;
 use api::startup::run;
 use api::telemetry;
-use secrecy::ExposeSecret;
 use sqlx::postgres::PgPoolOptions;
 use telemetry::{get_subscriber, init_subscriber};
 
@@ -21,8 +20,7 @@ async fn main() -> Result<(), Error> {
     let configuration = get_configuration().expect("Failed to read configuration");
     let connection_pool = PgPoolOptions::new()
         .acquire_timeout(std::time::Duration::from_secs(2))
-        .connect_lazy(configuration.database.connection_string().expose_secret())
-        .expect("Failed to connect to the database");
+        .connect_lazy_with(configuration.database.with_db());
 
     let address = format!(
         "{}:{}",
