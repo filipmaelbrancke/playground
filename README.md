@@ -1,5 +1,7 @@
 # playground
 
+![API build](https://github.com/filipmaelbrancke/playground/actions/workflows/api-build.yml/badge.svg)
+
 Trying to program a bit during the evenings while not-programming at the job...
 
 - [playing around with backend development in Rust](rust/api/)
