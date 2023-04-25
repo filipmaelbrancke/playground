@@ -1,4 +1,5 @@
 use api::configuration::{get_configuration, DatabaseSettings};
+use api::email_client::EmailClient;
 use api::startup::run;
 use api::telemetry::{get_subscriber, init_subscriber};
 use once_cell::sync::Lazy;
@@ -145,7 +146,17 @@ async fn spawn_api_app() -> TestApp {
 
     let connection_pool = configure_database(&configuration.database).await;
 
-    let server = run(listener, connection_pool.clone()).expect("Failed to bind");
+    let sender_email = configuration
+        .email_client
+        .sender()
+        .expect("Invalid sender email address");
+    let email_client = EmailClient::new(
+        configuration.email_client.base_url,
+        sender_email,
+        configuration.email_client.authorization_token,
+    );
+
+    let server = run(listener, connection_pool.clone(), email_client).expect("Failed to bind");
     // launch server as background task
     // tokio::spawn returns handle to spawned future
     // not used here -> hence non-binding let
