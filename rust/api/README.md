@@ -49,6 +49,11 @@ cargo watch -x check
 cargo watch -x check -x test -x run
 ```
 
+## Testing
+
+Cargo knows about `tests` folder -> integration tests.
+Each file within _tests_ folder -> gets compiled as its own crate
+
 # Misc
 
 Audit dependencies for vulnerabilities: `cargo audit`
