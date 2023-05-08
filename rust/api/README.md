@@ -24,6 +24,10 @@ http localhost:8000
 
 ```
 
+## Sqlx offline mode
+
+keep up-to-date using `cargo sqlx prepare -- --lib`  
+
 ## debug test case
 
 ```
