@@ -4,6 +4,7 @@ use api::telemetry::{get_subscriber, init_subscriber};
 use once_cell::sync::Lazy;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use uuid::Uuid;
+use wiremock::MockServer;
 
 pub static TRACING: Lazy<()> = Lazy::new(|| {
     let default_filter_level = "info".to_string();
@@ -23,6 +24,7 @@ pub static TRACING: Lazy<()> = Lazy::new(|| {
 pub struct TestApp {
     pub address: String,
     pub db_pool: PgPool,
+    pub email_server: MockServer,
 }
 
 impl TestApp {
@@ -40,11 +42,15 @@ impl TestApp {
 pub async fn spawn_api_app() -> TestApp {
     Lazy::force(&TRACING); // execute code in `TRACING` on first invocation, skip on other invocations
 
+    // mock server as stand in for the Postmark API
+    let email_server = MockServer::start().await;
+
     // randomise configuration for test isolation
     let configuration = {
         let mut config = get_configuration().expect("Failed to read configuration");
         config.database.database_name = Uuid::new_v4().to_string(); // different database for each test
         config.application.port = 0; // random OS port
+        config.email_client.base_url = email_server.uri();
         config
     };
 
@@ -62,6 +68,7 @@ pub async fn spawn_api_app() -> TestApp {
     TestApp {
         address,
         db_pool: get_connection_pool(&configuration.database),
+        email_server,
     }
 }
 
