@@ -33,6 +33,15 @@ keep up-to-date using `cargo sqlx prepare -- --lib`
 ```
 TEST_LOG=true cargo test health_check_should_return_ok | bunyan
 ```
+
+As sqlx logs can be quite verbose, might be better to reduce the noise:
+
+```
+export RUST_LOG="sqlx=error,info"
+export TEST_LOG=enabled
+cargo t xxxxx_xxxxx_xxxx | bunyan
+```
+
 (bunyan CLI = prettify outputted logs)
 
 ## check for unused dependencies
@@ -75,3 +84,4 @@ Topics to revisit:
 # Resources
 
 - [Zero To Production In Rust](https://www.zero2prod.com/)
+- [Error handling Isn't All About Errors](https://www.youtube.com/watch?v=rAF8mLI0naQ)
