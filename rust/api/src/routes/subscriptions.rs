@@ -141,10 +141,7 @@ pub async fn store_token(
     )
     .execute(transaction)
     .await
-    .map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-        StoreTokenError(e)
-    })?;
+    .map_err(StoreTokenError)?;
     Ok(())
 }
 
@@ -224,12 +221,7 @@ pub async fn insert_subscriber(
         Utc::now()
     )
     .execute(transaction)
-    .await
-    .map_err(|e| {
-        // {:?} = std::fmt::Debug format => capture query error
-        tracing::error!("Failed to execute query: {:?}", e);
-        e
-    })?; // for now... use `?` to return early, or fail returning an sqlx::Error => to improve
+    .await?; // error is propagated via `?`
     Ok(subscriber_id)
 }
 
