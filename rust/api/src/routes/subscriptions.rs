@@ -12,6 +12,7 @@ use uuid::Uuid;
 
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
 use crate::email_client::EmailClient;
+use crate::routes;
 use crate::startup::ApplicationBaseUrl;
 
 #[derive(serde::Deserialize)]
@@ -58,7 +59,7 @@ pub enum SubscribeError {
 
 impl std::fmt::Debug for SubscribeError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        error_chain_fmt(self, f)
+        routes::error_chain_fmt(self, f)
     }
 }
 
@@ -158,7 +159,7 @@ impl std::fmt::Display for StoreTokenError {
 
 impl std::fmt::Debug for StoreTokenError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        error_chain_fmt(self, f)
+        routes::error_chain_fmt(self, f)
     }
 }
 
@@ -223,17 +224,4 @@ pub async fn insert_subscriber(
     .execute(transaction)
     .await?; // error is propagated via `?`
     Ok(subscriber_id)
-}
-
-pub fn error_chain_fmt(
-    e: &impl std::error::Error,
-    f: &mut std::fmt::Formatter<'_>,
-) -> std::fmt::Result {
-    writeln!(f, "{e}\n")?;
-    let mut current = e.source();
-    while let Some(cause) = current {
-        writeln!(f, "Caused by:\n\t{cause}")?;
-        current = cause.source();
-    }
-    Ok(())
 }
