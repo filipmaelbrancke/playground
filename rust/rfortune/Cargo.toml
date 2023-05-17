@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 clap = "4"
-num = "0.4"
+rand = "0.8"
 walkdir = "2"
 regex = "1"
 
