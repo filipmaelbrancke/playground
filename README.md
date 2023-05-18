@@ -16,3 +16,5 @@
 	- [grep command in Rust](rust/rgrep/)
 	- [comm command in Rust](rust/rcomm/)
 	- [tail command in Rust](rust/rtail/)
+	- [fortune command in Rust](rust/rfortune/)
+	- [cal command in Rust](rust/rcal/)
