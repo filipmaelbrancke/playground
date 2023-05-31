@@ -18,3 +18,4 @@
 	- [tail command in Rust](rust/rtail/)
 	- [fortune command in Rust](rust/rfortune/)
 	- [cal command in Rust](rust/rcal/)
+	- [ls command in Rust](rust/rls/)

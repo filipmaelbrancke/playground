@@ -44,6 +44,16 @@ cargo t xxxxx_xxxxx_xxxx | bunyan
 
 (bunyan CLI = prettify outputted logs)
 
+## update dependencies
+
+`Cargo.toml` = package information / dependencies    
+Cargo uses the versions of dependencies in `Cargo.lock`    
+Update dependencies:    
+
+```
+cargo update
+```
+
 ## check for unused dependencies
 
 ```
