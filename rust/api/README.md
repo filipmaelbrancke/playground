@@ -24,7 +24,17 @@ http localhost:8000
 
 ```
 
-## Sqlx offline mode
+## SQLX
+
+### Add migration
+
+Migrate database (without tearing down and recreating the existing Postgres instance):
+
+```shell
+SKIP_DOCKER=true ./scripts/init_db.sh
+```
+
+### Sqlx offline mode
 
 keep up-to-date using `cargo sqlx prepare -- --lib`  
 
