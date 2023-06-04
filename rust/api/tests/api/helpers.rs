@@ -1,8 +1,9 @@
 use api::configuration::{get_configuration, DatabaseSettings};
 use api::startup::{get_connection_pool, Application};
 use api::telemetry::{get_subscriber, init_subscriber};
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHasher};
 use once_cell::sync::Lazy;
-use sha3::Digest;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use uuid::Uuid;
 use wiremock::MockServer;
@@ -84,14 +85,6 @@ impl TestApp {
         let plain_text = get_link(&body["TextBody"].as_str().unwrap());
         ConfirmationLinks { html, plain_text }
     }
-
-    /*pub async fn test_user(&self) -> (String, String) {
-        let user = sqlx::query!("SELECT username, password FROM users LIMIT 1",)
-            .fetch_one(&self.db_pool)
-            .await
-            .expect("Failed to create test user");
-        (user.username, user.password)
-    }*/
 }
 
 impl TestUser {
@@ -104,8 +97,11 @@ impl TestUser {
     }
 
     async fn store(&self, pool: &PgPool) {
-        let password_hash = sha3::Sha3_256::digest(self.password.as_bytes());
-        let password_hash = format!("{:x}", password_hash);
+        let salt = SaltString::generate(&mut rand::thread_rng());
+        let password_hash = Argon2::default()
+            .hash_password(self.password.as_bytes(), &salt)
+            .unwrap()
+            .to_string();
         sqlx::query!(
             "INSERT INTO users (user_id, username, password_hash) \
             VALUES ($1, $2, $3)",
@@ -152,23 +148,9 @@ pub async fn spawn_api_app() -> TestApp {
         email_server,
         test_user: TestUser::generate(),
     };
-    //add_test_user(&test_app.db_pool).await;
     test_app.test_user.store(&test_app.db_pool).await;
     test_app
 }
-
-/*async fn add_test_user(pool: &PgPool) {
-    sqlx::query!(
-        "INSERT INTO users (user_id, username, password) \
-        VALUES ($1, $2, $3)",
-        Uuid::new_v4(),
-        Uuid::new_v4().to_string(),
-        Uuid::new_v4().to_string(),
-    )
-    .execute(pool)
-    .await
-    .expect("Failed to create test user");
-}*/
 
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     // create database
