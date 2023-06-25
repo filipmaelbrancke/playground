@@ -5,6 +5,7 @@
 ### Trying to program a bit during the evenings while mostly not-programming at the job...
 
 - [playing around with backend development in Rust](rust/api/)
+- [building a (simplified) clone of Redis in Rust](rust/clone-redis/)
 - small Rust exercises implementing the basics of well-known command-line applications:
 	- [echo command in Rust](rust/recho/)
 	- [cat command in Rust](rust/rcat/)
