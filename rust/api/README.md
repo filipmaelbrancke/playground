@@ -105,3 +105,4 @@ Topics to revisit:
 
 - [Zero To Production In Rust](https://www.zero2prod.com/)
 - [Error handling Isn't All About Errors](https://www.youtube.com/watch?v=rAF8mLI0naQ)
+- [Async: What is blocking?](https://ryhl.io/blog/async-what-is-blocking/)

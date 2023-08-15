@@ -1,0 +1,62 @@
+### Health check
+GET http://localhost:8080/readiness
+Accept: application/json
+
+### Send POST request with words to check
+POST http://localhost:8080/api/words
+Content-Type: application/json
+
+{
+  "words": [
+    "foobar",
+    "fo",
+    "obar"
+  ],
+  "targetLength": 6,
+  "numberOfCombinations": 2
+}
+
+### Send POST request that has no solution
+POST http://localhost:8080/api/words
+Content-Type: application/json
+
+{
+  "words": [
+    "foobar",
+    "fubar"
+  ],
+  "targetLength": 6,
+  "numberOfCombinations": 2
+}
+
+### Send invalid POST request with empty words collection
+POST http://localhost:8080/api/words
+Content-Type: application/json
+
+{
+  "words": [],
+  "targetLength": 6,
+  "numberOfCombinations": 2
+}
+
+### Check whether word is in database
+GET http://localhost:8080/api/words/exists?word=signal
+Accept: application/json
+
+### Check whether word is in database
+GET http://localhost:8080/api/words/exists?word=narrow
+Accept: application/json
+
+### Error message for word that is not present in database
+GET http://localhost:8080/api/words/exists?word=abcdef
+Accept: application/json
+
+### Error message unable to check for empty word
+GET http://localhost:8080/api/words/exists?word=
+Accept: application/json
+
+### Error message unable to check for empty word
+GET http://localhost:8080/api/words/exists
+Accept: application/json
+
+

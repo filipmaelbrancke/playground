@@ -1,0 +1,50 @@
+import kotlin.String;
+import kotlin.collections.List;
+import net.maelbrancke.filip.repo.WordId;
+
+CREATE TABLE IF NOT EXISTS words(
+    id BIGSERIAL AS WordId PRIMARY KEY,
+    word TEXT NOT NULL,
+    parts TEXT AS List<String> NOT NULL,
+
+    UNIQUE(word, parts)
+);
+
+CREATE INDEX IF NOT EXISTS words_word ON words(word);
+
+selectAll:
+SELECT *
+FROM words;
+
+deleteAll:
+DELETE FROM words;
+
+selectPartsForWord:
+SELECT id, word, parts
+FROM words
+WHERE word = :word;
+
+insert:
+INSERT INTO words(word, parts)
+VALUES (:word, :parts);
+
+insertAndGetId:
+INSERT INTO words(word, parts)
+VALUES (:word, :parts)
+RETURNING id;
+
+wordExists:
+SELECT EXISTS(
+    SELECT 1
+    FROM words
+    WHERE word= :word
+    LIMIT 1
+);
+
+delete:
+DELETE FROM words
+WHERE id = :wordId;
+
+countWords:
+SELECT COUNT(*)
+FROM words;

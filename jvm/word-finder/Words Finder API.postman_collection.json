@@ -1,0 +1,133 @@
+{
+	"info": {
+		"_postman_id": "8a7a83c9-07d0-4b67-bb46-303e207e05c0",
+		"name": "Words Finder API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12524232"
+	},
+	"item": [
+		{
+			"name": "Check words combo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"words\": [\n    \"foobar\",\n    \"fo\",\n    \"obar\"\n  ],\n  \"targetLength\": 6\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/words",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"words"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check words combo for 2 combinations",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"words\": [\n    \"si\",\n    \"gn\",\n    \"al\",\n    \"shabby\",\n    \"osine\",\n    \"fo\",\n    \"them\",\n    \"narro\",\n    \"es\",\n    \"awler\",\n    \"plex\",\n    \"foobar\",\n    \"qu\",\n    \"rrow\",\n    \"iny\",\n    \"shabb\",\n    \"rrow\",\n    \"obar\",\n    \"well\",\n    \"zambia\",\n    \"inks\",\n    \"nd\",\n    \"s\",\n    \"romie\",\n    \"habb\",\n    \"osen\",\n    \"kiing\",\n    \"mu\",\n    \"sin\",\n    \"appeal\",\n    \"us\",\n    \"and\",\n    \"tryf\",\n    \"d\",\n    \"t\",\n    \"y\",\n    \"tle\",\n    \"signal\"\n  ],\n  \"targetLength\": 6,\n  \"numberOfCombinations\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/words",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"words"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check words combo for 3 combinations",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"words\": [\n    \"si\",\n    \"gn\",\n    \"al\",\n    \"shabby\",\n    \"osine\",\n    \"fo\",\n    \"them\",\n    \"narro\",\n    \"es\",\n    \"awler\",\n    \"plex\",\n    \"foobar\",\n    \"qu\",\n    \"rrow\",\n    \"iny\",\n    \"shabb\",\n    \"rrow\",\n    \"obar\",\n    \"well\",\n    \"zambia\",\n    \"inks\",\n    \"nd\",\n    \"s\",\n    \"romie\",\n    \"habb\",\n    \"osen\",\n    \"kiing\",\n    \"mu\",\n    \"sin\",\n    \"appeal\",\n    \"us\",\n    \"and\",\n    \"tryf\",\n    \"d\",\n    \"t\",\n    \"y\",\n    \"tle\",\n    \"signal\"\n  ],\n  \"targetLength\": 6,\n  \"numberOfCombinations\": 3\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/words",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"words"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check for the existence of a word in the database",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/words/exists?word=signal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"words",
+						"exists"
+					],
+					"query": [
+						{
+							"key": "word",
+							"value": "signal"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
