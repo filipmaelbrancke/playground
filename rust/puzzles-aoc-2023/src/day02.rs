@@ -1,6 +1,7 @@
 use crate::get_input_as_string;
 use scan_fmt::scan_fmt;
 
+#[derive(Clone)]
 struct Game {
     number_of_red: u32,
     number_of_green: u32,
@@ -23,12 +24,16 @@ impl Game {
             number_of_blue: self.number_of_blue + blue,
         }
     }
+
+    fn multiply_all_cubes(&self) -> u32 {
+        self.number_of_red * self.number_of_green * self.number_of_blue
+    }
 }
 
 pub fn solve() {
     let input = get_input_as_string("day02", "input");
     let assignment: Game = Game::new(12, 13, 14);
-    let result: u32 = input
+    let result_part1: u32 = input
         .lines()
         .map(parse_line())
         .map(|(game_id, game)| (game_id, parse_game()(game.as_str())))
@@ -42,7 +47,27 @@ pub fn solve() {
         .map(|(game_id, _)| game_id)
         .sum();
 
-    println!("Result : {result}");
+    let result_part2: u32 = input
+        .lines()
+        .map(parse_line())
+        .map(|(_, game)| parse_game()(game.as_str()))
+        .map(|sub_games| {
+            sub_games
+                .iter()
+                .cloned()
+                .reduce(|sub_game1, sub_game2| {
+                    Game {
+                        number_of_red: sub_game1.number_of_red.max(sub_game2.number_of_red),
+                        number_of_green: sub_game1.number_of_green.max(sub_game2.number_of_green),
+                        number_of_blue: sub_game1.number_of_blue.max(sub_game2.number_of_blue),
+                    }
+                })
+        })
+        .map(|game| game.unwrap().multiply_all_cubes())
+        .sum();
+
+    println!("Result part 1: {result_part1}");
+    println!("Result part 2: {result_part2}");
 }
 
 fn parse_line() -> fn(&str) -> (u32, String) {
