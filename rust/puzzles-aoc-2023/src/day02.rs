@@ -55,12 +55,10 @@ pub fn solve() {
             sub_games
                 .iter()
                 .cloned()
-                .reduce(|sub_game1, sub_game2| {
-                    Game {
-                        number_of_red: sub_game1.number_of_red.max(sub_game2.number_of_red),
-                        number_of_green: sub_game1.number_of_green.max(sub_game2.number_of_green),
-                        number_of_blue: sub_game1.number_of_blue.max(sub_game2.number_of_blue),
-                    }
+                .reduce(|sub_game1, sub_game2| Game {
+                    number_of_red: sub_game1.number_of_red.max(sub_game2.number_of_red),
+                    number_of_green: sub_game1.number_of_green.max(sub_game2.number_of_green),
+                    number_of_blue: sub_game1.number_of_blue.max(sub_game2.number_of_blue),
                 })
         })
         .map(|game| game.unwrap().multiply_all_cubes())
