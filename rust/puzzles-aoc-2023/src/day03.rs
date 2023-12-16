@@ -9,6 +9,9 @@ pub fn solve() {
 
     let result_part1 = calculate_part_numbers_sum(&schematic);
     println!("Result part 1: {result_part1}");
+
+    let result_part2 = calculate_gear_ratios_sum(&schematic);
+    println!("Result part 2: {result_part2}");
 }
 
 pub fn calculate_part_numbers_sum(schematic: &Array2<char>) -> u32 {
@@ -23,8 +26,8 @@ pub fn calculate_part_numbers_sum(schematic: &Array2<char>) -> u32 {
         match (current_number, schematic[(x, y)].to_digit(10)) {
             (None, None) => (),
             (None, Some(d)) => {
-                current_number = Some(d as u32);
-                has_adjacent_symbol = is_adjacent_to_symbols(&schematic, (x, y));
+                current_number = Some(d);
+                has_adjacent_symbol = is_adjacent_to_symbols(schematic, (x, y));
             }
             (Some(n), None) => {
                 if has_adjacent_symbol {
@@ -34,14 +37,33 @@ pub fn calculate_part_numbers_sum(schematic: &Array2<char>) -> u32 {
                 has_adjacent_symbol = false;
             }
             (Some(n), Some(d)) => {
-                current_number = Some(n * 10 + d as u32);
+                current_number = Some(n * 10 + d);
                 has_adjacent_symbol =
-                    has_adjacent_symbol || is_adjacent_to_symbols(&schematic, (x, y));
+                    has_adjacent_symbol || is_adjacent_to_symbols(schematic, (x, y));
             }
         }
     }
 
     sum
+}
+
+pub fn calculate_gear_ratios_sum(schematic: &Array2<char>) -> u32 {
+    let size = schematic.shape()[0];
+
+    (1..size)
+        .cartesian_product(1..size)
+        .filter(|position| schematic[*position] == '*')
+        .filter_map(|position| {
+            adjacent_characters(position)
+                .filter_map(|position| find_gear_ratio_number_start_position(schematic, position))
+                .unique()
+                .collect_tuple()
+                .map(|(first_gear_ratio, second_gear_ratio)| {
+                    transform_into_number(schematic, first_gear_ratio)
+                        * transform_into_number(schematic, second_gear_ratio)
+                })
+        })
+        .sum()
 }
 
 pub fn load_engine_schematic_in_2dimensional_array(input: String, size: usize) -> Array2<char> {
@@ -52,7 +74,7 @@ pub fn load_engine_schematic_in_2dimensional_array(input: String, size: usize) -
         }
     }
 
-    //println!("{:?}", schematic);
+    // println!("{:?}", schematic);
 
     schematic
 }
@@ -67,12 +89,29 @@ fn adjacent_characters((x, y): (usize, usize)) -> impl Iterator<Item = (usize, u
 fn is_adjacent_to_symbols(schematic: &Array2<char>, (x, y): (usize, usize)) -> bool {
     adjacent_characters((x, y)).any(|position| {
         let matrix_size = schematic.shape()[0];
-        return if position.0 >= matrix_size || position.1 >= matrix_size {
+        if position.0 >= matrix_size || position.1 >= matrix_size {
             false
         } else {
             schematic[position].is_valid_symbol()
-        };
+        }
     })
+}
+
+fn find_gear_ratio_number_start_position(
+    schematic: &Array2<char>,
+    (x, y): (usize, usize),
+) -> Option<(usize, usize)> {
+    (0..=y)
+        .rev()
+        .take_while(|y_value| schematic[(x, *y_value)].is_ascii_digit())
+        .last()
+        .map(|y_value| (x, y_value))
+}
+
+fn transform_into_number(schematic: &Array2<char>, (x, y): (usize, usize)) -> u32 {
+    (0..)
+        .map_while(|dy| schematic[(x, y + dy)].to_digit(10))
+        .fold(0, |dd, d| dd * 10 + d)
 }
 
 pub trait CheckExt {
@@ -88,7 +127,9 @@ impl CheckExt for char {
 #[cfg(test)]
 mod tests {
     use crate::day03::{
-        calculate_part_numbers_sum, load_engine_schematic_in_2dimensional_array, CheckExt,
+        calculate_gear_ratios_sum, calculate_part_numbers_sum,
+        find_gear_ratio_number_start_position, load_engine_schematic_in_2dimensional_array,
+        transform_into_number, CheckExt,
     };
     use crate::get_input_as_string;
 
@@ -106,5 +147,28 @@ mod tests {
         let test_input = get_input_as_string("day03", "example");
         let schematic = load_engine_schematic_in_2dimensional_array(test_input, 10);
         assert_eq!(calculate_part_numbers_sum(&schematic), 4361);
+    }
+
+    #[test]
+    fn test_find_gear_ratio_number_start_position() {
+        let test_input = get_input_as_string("day03", "example");
+        let schematic = load_engine_schematic_in_2dimensional_array(test_input, 10);
+        let position = find_gear_ratio_number_start_position(&schematic, (2, 8));
+        assert_eq!(position, Some((2, 6)));
+    }
+
+    #[test]
+    fn test_convert_to_number() {
+        let test_input = get_input_as_string("day03", "example");
+        let schematic = load_engine_schematic_in_2dimensional_array(test_input, 10);
+        let number = transform_into_number(&schematic, (2, 6));
+        assert_eq!(number, 633);
+    }
+
+    #[test]
+    fn test_aoc_example_2() {
+        let test_input = get_input_as_string("day03", "example");
+        let schematic = load_engine_schematic_in_2dimensional_array(test_input, 10);
+        assert_eq!(calculate_gear_ratios_sum(&schematic), 467835);
     }
 }
