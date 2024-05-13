@@ -40,12 +40,12 @@ class MerkleTreeTest : FunSpec({
 
     test("verify proof") {
         val test1Proof = merkleTree.proofItem("test1".toByteArray())
-        MerkleTree.verify(test1Proof, merkleTree.root(), Hash.sha3("test1".toByteArray())) shouldBe true
-        MerkleTree.verify(test1Proof, merkleTree.root(), Hash.sha3("test2".toByteArray())) shouldBe false
+        MerkleTree.verify(test1Proof, merkleTree.root(), merkleTree.hash("test1".toByteArray()), merkleTree.hash) shouldBe true
+        MerkleTree.verify(test1Proof, merkleTree.root(), merkleTree.hash("test2".toByteArray()), merkleTree.hash) shouldBe false
 
         val test2Proof = merkleTree.proofItem("test2".toByteArray())
-        MerkleTree.verify(test2Proof, merkleTree.root(), Hash.sha3("test2".toByteArray())) shouldBe true
-        MerkleTree.verify(test2Proof, merkleTree.root(), Hash.sha3("test3".toByteArray())) shouldBe false
+        MerkleTree.verify(test2Proof, merkleTree.root(), merkleTree.hash("test2".toByteArray()), merkleTree.hash) shouldBe true
+        MerkleTree.verify(test2Proof, merkleTree.root(), merkleTree.hash("test3".toByteArray()), merkleTree.hash) shouldBe false
     }
 
     test("byteArrayComparison") {

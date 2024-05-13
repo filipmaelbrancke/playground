@@ -1,8 +1,6 @@
 
 package net.maelbrancke.filip
 
-import org.web3j.crypto.Hash
-
 fun main() {
     val merkleTree = MerkleTree("685b36169e9092d97f48093432119ca8d9d284fcc0d75dd933870d49ac0bddf2",
         "9ab947332314954a3a581cca3a4ea655511f7755df6ac03db09c442e01b3cfdb",
@@ -22,7 +20,8 @@ fun main() {
     val result = MerkleTree.verify(
         merkleTree.proofItem("685b36169e9092d97f48093432119ca8d9d284fcc0d75dd933870d49ac0bddf2".toByteArray()),
         merkleTree.root(),
-        Hash.sha3("685b36169e9092d97f48093432119ca8d9d284fcc0d75dd933870d49ac0bddf2".toByteArray()))
+        merkleTree.hash("685b36169e9092d97f48093432119ca8d9d284fcc0d75dd933870d49ac0bddf2".toByteArray()),
+        merkleTree.hash)
     println("verify proof: $result")
 }
 

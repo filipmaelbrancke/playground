@@ -3,12 +3,13 @@ package net.maelbrancke.filip
 import org.web3j.crypto.Hash
 import kotlin.math.floor
 
-class MerkleTree(private val items: List<ByteArray>) {
+class MerkleTree(private val items: List<ByteArray>,
+    val hash: (ByteArray) -> ByteArray = Hash::sha3) {
 
     constructor(vararg items: ByteArray) : this(items.toList())
     constructor(vararg items: String) : this(items.map { it.toByteArray() })
 
-    private val leaves = items.map(Hash::sha3).toSortedSet(byteArrayComparator).toList()
+    private val leaves = items.map { hash(it) }.toSortedSet(byteArrayComparator).toList()
     private val layers = initializeLayers(leaves)
 
     fun root(): ByteArray {
@@ -83,7 +84,7 @@ class MerkleTree(private val items: List<ByteArray>) {
         val nextLayer = mutableListOf<ByteArray>()
         leaves.forEachIndexed { index, bytes ->
             if (index % 2 == 0) {
-                nextLayer.add(combinedHash(bytes, leaves.elementAtOrNull(index + 1)))
+                nextLayer.add(combinedHash(bytes, leaves.elementAtOrNull(index + 1), hash))
             }
         }
         return nextLayer
@@ -91,16 +92,16 @@ class MerkleTree(private val items: List<ByteArray>) {
 
     companion object {
 
-        fun verify(proof: List<ByteArray>, root: ByteArray, leaf: ByteArray): Boolean {
-            var hash = leaf
+        fun verify(proof: List<ByteArray>, root: ByteArray, leaf: ByteArray, hash: (ByteArray) -> ByteArray): Boolean {
+            var hashedNode = leaf
             proof.forEach {
-                if (byteArrayComparator.compare(hash, it) < 0) {
-                    hash = combinedHash(hash, it)
+                if (byteArrayComparator.compare(hashedNode, it) < 0) {
+                    hashedNode = combinedHash(hashedNode, it, hash)
                 } else {
-                    hash = combinedHash(it, hash)
+                    hashedNode = combinedHash(it, hashedNode, hash)
                 }
             }
-            return byteArrayComparator.compare(hash, root) == 0
+            return byteArrayComparator.compare(hashedNode, root) == 0
         }
 
          val byteArrayComparator = Comparator<ByteArray> { left, right ->
@@ -115,12 +116,12 @@ class MerkleTree(private val items: List<ByteArray>) {
             comparatorReturn
         }
 
-        private fun combinedHash(left: ByteArray, right: ByteArray?): ByteArray {
+        private fun combinedHash(left: ByteArray, right: ByteArray?, hash: (ByteArray) -> ByteArray): ByteArray {
             /*if (right == null) {
                 return left
             }*/
             val sortedByteArrays = listOf(left, right ?: left).sortedWith(byteArrayComparator)
-            return Hash.sha3(sortedByteArrays.first().plus(sortedByteArrays.last()))
+            return hash(sortedByteArrays.first().plus(sortedByteArrays.last()))
         }
     }
 }
