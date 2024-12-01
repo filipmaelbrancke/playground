@@ -4,11 +4,27 @@ pub fn solve() {
     let input = get_input_as_string("day01", "input");
 
     part_one(input.clone());
+    part_two(input.clone());
 }
 
 fn part_one(input: String) {
-    let sum = find_total_distance(input);
-    println!("Part one: {}", sum);
+    let total_distance = find_total_distance(input);
+    println!("Part one: {}", total_distance);
+}
+
+fn part_two(input: String) {
+    let total_similarity = find_total_similarity(input);
+    println!("Part two: {}", total_similarity);
+}
+
+fn find_total_similarity(input: String) -> u32 {
+    let (left_numbers, right_numbers) = parse_input(input);
+    let mut total_similarity: u32 = 0;
+    for left_number in left_numbers {
+        //total_similarity += left_number * right_numbers.iter().filter(|x| x == &&left_number).count() as u32;
+        total_similarity += left_number * right_numbers.iter().filter(|x| **x == left_number).count() as u32;
+    }
+    total_similarity
 }
 
 fn find_total_distance(input: String) -> u32 {
@@ -77,5 +93,10 @@ mod tests {
     #[test]
     fn test_find_total_distance() {
         assert_eq!(super::find_total_distance(get_example_input()), 11);
+    }
+
+    #[test]
+    fn test_find_total_similarity() {
+        assert_eq!(super::find_total_similarity(get_example_input()), 31);
     }
 }
