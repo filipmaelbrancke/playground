@@ -22,7 +22,8 @@ fn find_total_similarity(input: String) -> u32 {
     let mut total_similarity: u32 = 0;
     for left_number in left_numbers {
         //total_similarity += left_number * right_numbers.iter().filter(|x| x == &&left_number).count() as u32;
-        total_similarity += left_number * right_numbers.iter().filter(|x| **x == left_number).count() as u32;
+        total_similarity +=
+            left_number * right_numbers.iter().filter(|x| **x == left_number).count() as u32;
     }
     total_similarity
 }
@@ -32,7 +33,11 @@ fn find_total_distance(input: String) -> u32 {
     left_numbers.sort();
     right_numbers.sort();
 
-    left_numbers.into_iter().zip(right_numbers).map(|(left, right)| left.abs_diff(right)).sum()
+    left_numbers
+        .into_iter()
+        .zip(right_numbers)
+        .map(|(left, right)| left.abs_diff(right))
+        .sum()
 }
 
 fn parse_input(input: String) -> (Vec<u32>, Vec<u32>) {
@@ -67,20 +72,31 @@ mod tests {
     use crate::day01::{parse_line_to_pair, NumberPair};
 
     fn get_example_input() -> String {
-        String::from("\
+        String::from(
+            "\
 3   4
 4   3
 2   5
 1   3
 3   9
-3   3")
+3   3",
+        )
     }
 
     #[test]
     fn test_get_numbers_from_line() {
-        assert_eq!(parse_line_to_pair("3   4"), NumberPair { left: 3, right: 4 });
-        assert_eq!(parse_line_to_pair("3   9"), NumberPair { left: 3, right: 9 });
-        assert_ne!(parse_line_to_pair("3   9"), NumberPair { left: 3, right: 3 });
+        assert_eq!(
+            parse_line_to_pair("3   4"),
+            NumberPair { left: 3, right: 4 }
+        );
+        assert_eq!(
+            parse_line_to_pair("3   9"),
+            NumberPair { left: 3, right: 9 }
+        );
+        assert_ne!(
+            parse_line_to_pair("3   9"),
+            NumberPair { left: 3, right: 3 }
+        );
     }
 
     #[test]
@@ -89,7 +105,7 @@ mod tests {
         assert_eq!(left_numbers, vec![3, 4, 2, 1, 3, 3]);
         assert_eq!(right_numbers, vec![4, 3, 5, 3, 9, 3]);
     }
-    
+
     #[test]
     fn test_find_total_distance() {
         assert_eq!(super::find_total_distance(get_example_input()), 11);
