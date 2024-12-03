@@ -9,6 +9,9 @@ static MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
 static DO_OR_DONT_MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
     Regex::new(r"(?s)don't\(\).*?do\(\)").expect("Unable to compile regex"));
 
+static CONDITIONAL_MUL_INSTRUCTIONS_REGEX: LazyLock<Regex> = LazyLock::new(||
+    Regex::new(r"mul\(([0-9]+),\s{0,}([0-9]+)\)|(do\(\))|(don't\(\))").expect("Unable to compile regex"));
+
 pub fn solve() {
     let input = get_input_as_string("day03", "input");
 
@@ -22,7 +25,8 @@ fn part_one(input: String) {
 }
 
 fn part_two(input: String) {
-    let filtered_multiplications_sum = find_filtered_multiplications_sum(input);
+    find_filtered_multiplications_sum(input.clone());
+    let filtered_multiplications_sum = find_filtered_multiplications_sum_alternative(input);
     println!("Part two: {}", filtered_multiplications_sum);
 }
 
@@ -37,6 +41,26 @@ fn find_filtered_multiplications_sum(input: String) -> u32 {
     // filter out the don't do mul instructions parts from the input, and run the mul instructions
     let filtered_input = remove_disabled_mul_instructions(&input);
     find_multiplications_sum(filtered_input.to_string())
+}
+
+// Alternative solution after checking the reddit thread  
+fn find_filtered_multiplications_sum_alternative(input: String) -> u32 {
+    let mut sum: u32 = 0;
+    let mut enabled = true;
+
+    for capture in CONDITIONAL_MUL_INSTRUCTIONS_REGEX.captures_iter(&input) {
+        // Third group matches the literal string "do()"
+        if capture.get(3).is_some() { enabled = true; }
+        // Fourth group matches the literal string "don't()"
+        else if capture.get(4).is_some() { enabled = false; }
+        else if enabled {
+            sum += MulInstruction {
+                x: capture[1].parse::<u32>().unwrap(),
+                y: capture[2].parse::<u32>().unwrap(),
+            }.run();
+        }
+    }
+    sum
 }
 
 fn remove_disabled_mul_instructions(input: &str) -> String {
