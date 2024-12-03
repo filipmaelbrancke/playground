@@ -6,11 +6,14 @@ use crate::get_input_as_string;
 static MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
     Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").expect("Unable to compile regex"));
 
+static DO_OR_DONT_MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
+    Regex::new(r"(?s)don't\(\).*?do\(\)").expect("Unable to compile regex"));
+
 pub fn solve() {
     let input = get_input_as_string("day03", "input");
 
     part_one(input.clone());
-    //part_two(input.clone());
+    part_two(input.clone());
 }
 
 fn part_one(input: String) {
@@ -19,7 +22,8 @@ fn part_one(input: String) {
 }
 
 fn part_two(input: String) {
-    todo!()
+    let filtered_multiplications_sum = find_filtered_multiplications_sum(input);
+    println!("Part two: {}", filtered_multiplications_sum);
 }
 
 fn find_multiplications_sum(input: String) -> u32 {
@@ -27,6 +31,17 @@ fn find_multiplications_sum(input: String) -> u32 {
         .iter()
         .map(|instruction| instruction.run())
         .sum()
+}
+
+fn find_filtered_multiplications_sum(input: String) -> u32 {
+    // filter out the don't do mul instructions parts from the input, and run the mul instructions
+    let filtered_input = remove_disabled_mul_instructions(&input);
+    find_multiplications_sum(filtered_input.to_string())
+}
+
+fn remove_disabled_mul_instructions(input: &str) -> String {
+    // Only the most recent do() or don't() instruction applies. At the beginning of the program, mul instructions are enabled.
+    DO_OR_DONT_MUL_INSTRUCTION_REGEX.replace_all(input, "").into_owned()
 }
 
 fn find_mul_instructions(input: &str) -> Vec<MulInstruction> {
@@ -58,6 +73,10 @@ mod tests {
 
     fn get_example_input() -> String {
         String::from("xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")
+    }
+
+    fn get_example_input_2() -> String {
+        String::from("xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))")
     }
 
     #[test]
@@ -99,5 +118,18 @@ mod tests {
     fn test_find_multiplications_sum() {
         let input = get_example_input();
         assert_eq!(super::find_multiplications_sum(input), 161);
+    }
+
+    #[test]
+    fn test_filter_out_disabled_sections() {
+        let input = get_example_input_2();
+        let expected = "xmul(2,4)&mul[3,7]!^?mul(8,5))";
+        assert_eq!(super::remove_disabled_mul_instructions(&input), expected);
+    }
+
+    #[test]
+    fn test_find_filtered_multiplications_sum() {
+        let input = get_example_input_2();
+        assert_eq!(super::find_filtered_multiplications_sum(input), 48);
     }
 }
