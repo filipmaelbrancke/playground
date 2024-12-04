@@ -9,4 +9,7 @@ fn main() {
 
     println!("Solutions for day 3::");
     puzzles_aoc_2024::day03::solve();
+
+    println!("Solutions for day 4::");
+    puzzles_aoc_2024::day04::solve();
 }

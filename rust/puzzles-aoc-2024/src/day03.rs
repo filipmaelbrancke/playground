@@ -1,16 +1,18 @@
-use std::sync::LazyLock;
-use regex::Regex;
 use crate::get_input_as_string;
+use regex::Regex;
+use std::sync::LazyLock;
 
 // instruction = like mul(X,Y), where X and Y are each 1-3 digit numbers.
-static MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
-    Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").expect("Unable to compile regex"));
+static MUL_INSTRUCTION_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").expect("Unable to compile regex"));
 
-static DO_OR_DONT_MUL_INSTRUCTION_REGEX: LazyLock<Regex> = LazyLock::new(||
-    Regex::new(r"(?s)don't\(\).*?do\(\)").expect("Unable to compile regex"));
+static DO_OR_DONT_MUL_INSTRUCTION_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?s)don't\(\).*?do\(\)").expect("Unable to compile regex"));
 
-static CONDITIONAL_MUL_INSTRUCTIONS_REGEX: LazyLock<Regex> = LazyLock::new(||
-    Regex::new(r"mul\(([0-9]+),\s{0,}([0-9]+)\)|(do\(\))|(don't\(\))").expect("Unable to compile regex"));
+static CONDITIONAL_MUL_INSTRUCTIONS_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"mul\(([0-9]+),\s{0,}([0-9]+)\)|(do\(\))|(don't\(\))")
+        .expect("Unable to compile regex")
+});
 
 pub fn solve() {
     let input = get_input_as_string("day03", "input");
@@ -43,21 +45,25 @@ fn find_filtered_multiplications_sum(input: String) -> u32 {
     find_multiplications_sum(filtered_input.to_string())
 }
 
-// Alternative solution after checking the reddit thread  
+// Alternative solution after checking the reddit thread
 fn find_filtered_multiplications_sum_alternative(input: String) -> u32 {
     let mut sum: u32 = 0;
     let mut enabled = true;
 
     for capture in CONDITIONAL_MUL_INSTRUCTIONS_REGEX.captures_iter(&input) {
         // Third group matches the literal string "do()"
-        if capture.get(3).is_some() { enabled = true; }
+        if capture.get(3).is_some() {
+            enabled = true;
+        }
         // Fourth group matches the literal string "don't()"
-        else if capture.get(4).is_some() { enabled = false; }
-        else if enabled {
+        else if capture.get(4).is_some() {
+            enabled = false;
+        } else if enabled {
             sum += MulInstruction {
                 x: capture[1].parse::<u32>().unwrap(),
                 y: capture[2].parse::<u32>().unwrap(),
-            }.run();
+            }
+            .run();
         }
     }
     sum
@@ -65,16 +71,21 @@ fn find_filtered_multiplications_sum_alternative(input: String) -> u32 {
 
 fn remove_disabled_mul_instructions(input: &str) -> String {
     // Only the most recent do() or don't() instruction applies. At the beginning of the program, mul instructions are enabled.
-    DO_OR_DONT_MUL_INSTRUCTION_REGEX.replace_all(input, "").into_owned()
+    DO_OR_DONT_MUL_INSTRUCTION_REGEX
+        .replace_all(input, "")
+        .into_owned()
 }
 
 fn find_mul_instructions(input: &str) -> Vec<MulInstruction> {
-    MUL_INSTRUCTION_REGEX.captures_iter(input)
-        .map(|capture| {
-            MulInstruction {
-                x: capture[1].parse::<u32>().expect("Unable to parse x int as u32"),
-                y: capture[2].parse::<u32>().expect("Unable to parse y int as u32"),
-            }
+    MUL_INSTRUCTION_REGEX
+        .captures_iter(input)
+        .map(|capture| MulInstruction {
+            x: capture[1]
+                .parse::<u32>()
+                .expect("Unable to parse x int as u32"),
+            y: capture[2]
+                .parse::<u32>()
+                .expect("Unable to parse y int as u32"),
         })
         .collect()
 }
@@ -113,7 +124,7 @@ mod tests {
         assert_eq!(MUL_INSTRUCTION_REGEX.is_match("mul[3,7]"), false);
         assert_eq!(MUL_INSTRUCTION_REGEX.is_match("mul(32,64]"), false);
     }
-    
+
     #[test]
     fn test_find_mul_instructions() {
         let input = get_example_input();
@@ -125,7 +136,7 @@ mod tests {
         ];
         assert_eq!(super::find_mul_instructions(&input), expected);
     }
-    
+
     #[test]
     fn test_mul_instruction_run() {
         let instruction = super::MulInstruction { x: 2, y: 4 };
@@ -137,7 +148,7 @@ mod tests {
         let instruction = super::MulInstruction { x: 8, y: 5 };
         assert_eq!(instruction.run(), 40);
     }
-    
+
     #[test]
     fn test_find_multiplications_sum() {
         let input = get_example_input();
