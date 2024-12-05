@@ -5,7 +5,7 @@ pub fn solve() {
     let input = get_input_as_string("day05", "input");
 
     part_one(input.clone());
-    //part_two(input.clone());
+    part_two(input.clone());
 }
 
 fn part_one(input: String) {
@@ -14,7 +14,8 @@ fn part_one(input: String) {
 }
 
 fn part_two(input: String) {
-    todo!()
+    let incorrectly_ordered_sum = order_incorrectly_ordered_updates_and_sum(input);
+    println!("Part two: {}", incorrectly_ordered_sum);
 }
 
 fn find_update_middle_page_number_sum(input: String) -> u32 {
@@ -22,6 +23,16 @@ fn find_update_middle_page_number_sum(input: String) -> u32 {
     updates
         .iter()
         .filter(|update| update.is_ordered_according_to_rules(&rules))
+        .map(|update| update.get_middle_page_number())
+        .sum()
+}
+
+fn order_incorrectly_ordered_updates_and_sum(input: String) -> u32 {
+    let (rules, updates) = get_ordering_rules_and_updates(input);
+    updates
+        .iter()
+        .filter(|update| !update.is_ordered_according_to_rules(&rules))
+        .map(|update| update.order_according_to_rules(&rules))
         .map(|update| update.get_middle_page_number())
         .sum()
 }
@@ -90,6 +101,30 @@ impl Update {
 
     fn get_middle_page_number(&self) -> u32 {
         self.page_numbers[self.page_numbers.len() / 2]
+    }
+
+    fn order_according_to_rules(&self, rules: &ParsedOrderingRules) -> Update {
+        let mut ordered_page_numbers = self.page_numbers.clone();
+        for i in 0..ordered_page_numbers.len() {
+            let earlier = rules
+                .get(&self.page_numbers[i]) // get rules associated with the current page number
+                .iter()
+                .flat_map(|x| x.iter()) // iterate over the HashSet
+                .flat_map(|x| ordered_page_numbers.iter().position(|y| y == x)) // map rule to position
+                .min() // find minimum position
+                .filter(|x| x < &i); // found position must be earlier than the current index i / page number
+
+            if let Some(earlier_position) = earlier {
+                // if an earlier position was found
+                // remove element at index i
+                ordered_page_numbers.remove(i);
+                // insert element at earlier position
+                ordered_page_numbers.insert(earlier_position, self.page_numbers[i]);
+            }
+        }
+        Update {
+            page_numbers: ordered_page_numbers,
+        }
     }
 }
 
@@ -160,7 +195,7 @@ mod tests {
     #[test]
     fn test_check_correctly_ordered_updates() {
         let input = get_example_input();
-        let (ordering_rules, updates) = super::get_ordering_rules_and_updates(input);
+        let (ordering_rules, _updates) = super::get_ordering_rules_and_updates(input);
         assert_eq!(
             Update::new("75,47,61,53,29").is_ordered_according_to_rules(&ordering_rules),
             true
@@ -188,8 +223,32 @@ mod tests {
     }
 
     #[test]
+    fn test_order_incorrectly_ordered_update() {
+        let input = get_example_input();
+        let (ordering_rules, _updates) = super::get_ordering_rules_and_updates(input);
+        assert_eq!(
+            Update::new("75,97,47,61,53").order_according_to_rules(&ordering_rules),
+            Update::new("97,75,47,61,53")
+        );
+        assert_eq!(
+            Update::new("61,13,29").order_according_to_rules(&ordering_rules),
+            Update::new("61,29,13")
+        );
+        assert_eq!(
+            Update::new("97,13,75,29,47").order_according_to_rules(&ordering_rules),
+            Update::new("97,75,47,29,13")
+        );
+    }
+
+    #[test]
     fn test_find_update_middle_page_number_sum_in_example_should_be_143() {
         let input = get_example_input();
         assert_eq!(super::find_update_middle_page_number_sum(input), 143);
+    }
+
+    #[test]
+    fn test_order_incorrectly_ordered_updates_and_sum_in_example_should_be_123() {
+        let input = get_example_input();
+        assert_eq!(super::order_incorrectly_ordered_updates_and_sum(input), 123);
     }
 }
