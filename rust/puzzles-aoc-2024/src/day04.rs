@@ -106,7 +106,7 @@ MXMXAXMASX",
     }
 
     #[test]
-    fn test_find_number_of_x_mas_occurrences_in_example_should_be_18() {
+    fn test_find_number_of_x_mas_occurrences_in_example_should_be_9() {
         let input = get_example_input();
         assert_eq!(super::find_number_of_x_mas_occurences(input), 9);
     }
