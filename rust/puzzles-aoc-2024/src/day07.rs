@@ -29,7 +29,6 @@ impl CalibrationEquation {
         false
     }
 
-    //fn evaluate(&self, operators: &Vec<Operator>) -> u64 {
     fn evaluate(&self, operators: &[Operator]) -> u64 {
         let mut value = self.test_numbers[0];
         for (number_index, operator) in operators.iter().enumerate() {
