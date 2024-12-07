@@ -1,5 +1,6 @@
 use crate::day06::SimulationResult::KeepLooping;
 use crate::get_input_as_string;
+use rayon::prelude::*;
 use std::collections::HashSet;
 
 pub fn solve() {
@@ -192,7 +193,7 @@ fn part_one(input: String) {
 }
 
 fn part_two(input: String) {
-    let obstructed_positions = calculate_obstructed_positions(input);
+    let obstructed_positions = calculate_parallel_obstructed_positions(input);
     println!("Part two: {}", obstructed_positions);
 }
 
@@ -207,6 +208,7 @@ fn calculate_distinct_guard_positions(input: String) -> u32 {
 }
 
 // slowest brute-force solution
+#[allow(dead_code)]
 fn calculate_obstructed_positions(input: String) -> u32 {
     let simulation = Simulation::new(input);
 
@@ -228,10 +230,34 @@ fn calculate_obstructed_positions(input: String) -> u32 {
         .count() as u32
 }
 
+// still the slow brute-force solution, but sped up using rayon
+// Rayon: A data parallelism library for Rust
+fn calculate_parallel_obstructed_positions(input: String) -> u32 {
+    let simulation = Simulation::new(input);
+
+    let positions: Vec<Position> = (0..simulation.map.size())
+        .map(|i| Position {
+            column: (i % simulation.map.width()) as u32,
+            row: (i / simulation.map.width()) as u32,
+        })
+        .filter(|position| !simulation.map.is_obstacle(position))
+        .filter(|position| (simulation.position != *position))
+        .collect();
+
+    positions
+        .par_iter()
+        .filter(|position| {
+            let simulation_result = simulation.clone().run(Some((*position).clone()));
+            matches!(simulation_result, KeepLooping)
+        })
+        .count() as u32
+}
+
 #[cfg(test)]
 mod tests {
     use crate::day06::{
-        calculate_distinct_guard_positions, calculate_obstructed_positions, Position,
+        calculate_distinct_guard_positions, calculate_obstructed_positions,
+        calculate_parallel_obstructed_positions, Position,
     };
     use crate::get_input_as_string;
 
@@ -323,5 +349,13 @@ mod tests {
     #[test]
     fn test_calculate_loops_from_example_should_be_6() {
         assert_eq!(calculate_obstructed_positions(get_example_input()), 6);
+    }
+
+    #[test]
+    fn test_calculate_parallel_loops_from_example_should_be_6() {
+        assert_eq!(
+            calculate_parallel_obstructed_positions(get_example_input()),
+            6
+        );
     }
 }
