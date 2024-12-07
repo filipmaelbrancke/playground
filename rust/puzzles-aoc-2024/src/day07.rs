@@ -1,5 +1,6 @@
 use crate::get_input_as_string;
 use itertools::Itertools;
+use rayon::prelude::*;
 
 pub fn solve() {
     let input = get_input_as_string("day07", "input");
@@ -110,7 +111,7 @@ fn calculate_total_calibration_result_including_concatenation(input: String) -> 
 fn calculate_total_sum_from_calibration_results(input: String, operators: Vec<Operator>) -> u64 {
     Equations::from_input(&input)
         .equations
-        .iter()
+        .par_iter()
         .filter(|equation| equation.is_valid(operators.clone()))
         .map(|equation| equation.test_result)
         .sum()
