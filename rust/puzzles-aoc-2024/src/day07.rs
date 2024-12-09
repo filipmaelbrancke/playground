@@ -180,7 +180,7 @@ mod tests {
     fn test_operators() {
         assert_eq!(Add.apply(1, 2), 3);
         assert_eq!(Multiply.apply(2, 3), 6);
-        assert_eq!(super::Operator::Concatenate.apply(15, 6), 156);
+        assert_eq!(Concatenate.apply(15, 6), 156);
     }
 
     #[test]
@@ -191,7 +191,7 @@ mod tests {
         };
         assert_eq!(equation.evaluate(&vec![Add]), 29);
         assert_eq!(equation.evaluate(&vec![Multiply]), 190);
-        assert_eq!(equation.evaluate(&vec![super::Operator::Concatenate]), 1019);
+        assert_eq!(equation.evaluate(&vec![Concatenate]), 1019);
     }
 
     #[test]
