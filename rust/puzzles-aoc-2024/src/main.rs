@@ -11,6 +11,7 @@ fn main() {
         puzzles_aoc_2024::day07::solve,
         puzzles_aoc_2024::day08::solve,
         puzzles_aoc_2024::day09::solve,
+        puzzles_aoc_2024::day10::solve,
     ];
 
     for (i, solve) in solutions.iter().enumerate() {
