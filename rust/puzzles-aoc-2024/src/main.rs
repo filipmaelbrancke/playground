@@ -13,6 +13,7 @@ fn main() {
         puzzles_aoc_2024::day09::solve,
         puzzles_aoc_2024::day10::solve,
         puzzles_aoc_2024::day11::solve,
+        puzzles_aoc_2024::day12::solve,
     ];
 
     for (i, solve) in solutions.iter().enumerate() {

@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::get_input_as_string;
+use std::collections::HashMap;
 
 pub fn solve() {
     let input = get_input_as_string("day11", "input");
@@ -20,7 +20,7 @@ impl From<String> for Stones {
                 .split_whitespace()
                 .map(|x| x.parse::<StoneNumber>().unwrap())
                 .collect(),
-            cache: HashMap::new()
+            cache: HashMap::new(),
         }
     }
 }
@@ -28,7 +28,6 @@ impl From<String> for Stones {
 type StoneNumber = u64;
 
 impl Stones {
-
     fn simulate(&mut self, number_of_blinks: u64) -> u64 {
         let stone_numbers: Vec<StoneNumber> = self.stones.to_vec();
         stone_numbers
@@ -36,7 +35,7 @@ impl Stones {
             .map(|&stone_number| self.count(stone_number, number_of_blinks))
             .sum()
     }
-    
+
     /* Stone transformation rules:
     If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
     If the stone is engraved with a number that has an even number of digits, it is replaced by two stones. The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
@@ -53,7 +52,7 @@ impl Stones {
             vec![stone_number * 2024]
         }
     }
-    
+
     fn split_number(number: StoneNumber) -> (StoneNumber, StoneNumber) {
         let number_str = number.to_string();
         let len = number_str.len();
@@ -98,10 +97,9 @@ fn run_logic(input: String, number_of_blinks: u64) -> u64 {
     Stones::from(input).simulate(number_of_blinks)
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::day11::{run_logic};
+    use crate::day11::run_logic;
 
     fn get_example_input() -> String {
         String::from("125 17")
@@ -116,7 +114,7 @@ mod tests {
         assert_eq!(left, 10);
         assert_eq!(right, 0);
     }
-    
+
     #[test]
     fn test_process_stone_number() {
         let result = super::Stones::process(0);
@@ -128,7 +126,7 @@ mod tests {
         let result = super::Stones::process(1000);
         assert_eq!(result, vec![10, 0]);
     }
-    
+
     #[test]
     fn test_part_one_from_example() {
         assert_eq!(run_logic(get_example_input(), 6), 22);
